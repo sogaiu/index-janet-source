@@ -1,0 +1,118 @@
+= index-janet-source - Generate Index Files for Janet's Source Code
+:toc:
+
+== Aim
+
+Make reading and navigating Janet's source code more ergonomic.
+
+When reading Janet source code, if you've ever tried "jump" to
+definition in typical editor setups for more than a few cases, you may
+be able to relate.
+
+== Background
+
+For lookups of C identifiers from within C source code, the 2 C LSP servers
+https://github.com/MaskRay/ccls[ccls]
+and https://github.com/clangd/clangd[clangd]
+appear to offer very good results.
+
+However, for lookups from Janet -> Janet (e.g. `if-let`) or
+Janet -> C (e.g. `length` or `def`), not surprisingly, neither of
+those LSP servers help.
+
+== How
+
+Provide means to simply create index files (tags or TAGS) that contain
+locations of "Janet-relevant" constructs for the Janet -> Janet and
+Janet -> C cases.
+
+Various editors can make use of such an index file, e.g. Vim/Neovim,
+Emacs, Kakoune, VSCode, etc.
+
+This project provides a script `idk-janet` which is tuned to create
+index files via custom Universal Ctags invocations.
+
+== Installation
+
+=== Prerequisites
+
+* https://git-scm.com/[git]
+* https://github.com/janet-lang/janet[janet]
+* https://github.com/janet-lang/jpm[jpm]
+* https://github.com/universal-ctags/ctags[Universal Ctags] (not `ctags` from Emacs or `Exhuberant Ctags`)
+
+=== Steps
+
+0. Ensure prerequisites are installed
+
+1. Clone this repository using `git`
+
+2. Use jpm to install the `idk-janet` script via `jpm install`
+
+== Usage
+
+=== Create an index file
+
+1. Change current working directory to Janet's repository root directory.
+
+2. Invoke `idk-janet`.
+
+This should result in the creation of an index file named `tags`.
+
+For Emacs users, set the `IJS_OUTPUT_FORMAT` environment variable to
+`etags` before running `idk-janet`.  That should yield a `TAGS` file
+that Emacs can use.
+
+=== Jump to Definition
+
+1. In a supported editor, open a `.janet` file from within the
+   Janet source repository.
+
+2. Put the cursor within an identifier (except Kakoune).
+
+3. Invoke the relevant command:
+   * Vim/Neovim: `g]` or https://neovim.io/doc/user/tagsrch.html#tag-matchlist[:tselect]
+   * Emacs: `M-.` or https://www.gnu.org/software/emacs/manual/html_node/emacs/Looking-Up-Identifiers.html[xref-find-definitions]
+   * Kakoune with https://github.com/andreyorst/fzf.kak[fzf.kak]: `Ctrl-p` then `t` then filter for the identifer by typing
+   * VSCode with https://github.com/jtanx/ctagsx[ctagsx]: `F12` or `Ctrl-t`
+
+== Support Details
+
+* Indexing of Janet identifiers
+  ** Janet definitions (e.g. `repl` in `boot.janet`)
+  ** CFunction definitions (e.g. `os/spawn` in `src/core/os.c`)
+  ** Corelib definitions (e.g. `apply` or `mod` in `src/core/corelib.c`)
+  ** Specials definitions (e.g. `def` or `break` in `src/core/specials.c`)
+  ** JanetAbstractType-backed things (e.g. `core/file` in `src/core/os.c`)
+* Multiple output formats
+  ** Types
+     *** Vim/Neovim `tags` output (universal u-ctags output)
+     *** Emacs `TAGS` output (universal etags output)
+  ** Defaults to `tags`
+  ** Select type via environment variable IJS_OUTPUT_FORMAT
+     *** u-ctags
+     *** etags
+* Platform support
+  ** Linux
+  ** macos
+  ** Various BSDs
+  ** Windows
+
+== Credits
+
+* ahungry
+* andrewchambers
+* bakpakin
+* crocket
+* EleanorNB
+* goto-engineering
+* GrayJack
+* LeviSchuck
+* llmll
+* pepe
+* pyrmont
+* saikyun
+* subsetpark
+* swlkr
+* uvtc
+* yumaikas
