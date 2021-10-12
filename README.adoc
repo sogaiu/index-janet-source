@@ -14,7 +14,7 @@ where are `+` or `break` defined?), you may be able to relate.
 For lookups of C identifiers from within C source code, the 2 C LSP servers
 https://github.com/MaskRay/ccls[ccls]
 and https://github.com/clangd/clangd[clangd]
-appear to offer very good results.
+appear to offer very good results.  See link:doc/indexing-c.adoc[here] for setup details.
 
 However, for lookups from Janet -> Janet (e.g. `if-let`) or
 Janet -> C (e.g. `length` or `def`), not surprisingly, neither of
