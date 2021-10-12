@@ -6,8 +6,8 @@
 Make reading and navigating Janet's source code more ergonomic.
 
 When reading Janet source code, if you've ever tried "jump" to
-definition in typical editor setups for more than a few cases, you may
-be able to relate.
+definition in typical editor setups for more than a few cases (e.g.
+where are `+` or `break` defined?), you may be able to relate.
 
 == Background
 
