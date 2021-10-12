@@ -1,0 +1,130 @@
+= Indexing Janet's C Source Code
+:toc:
+
+== Background
+
+After making attempts to index Janet's C source code using https://github.com/universal-ctags/ctags[Universal Ctags] and https://github.com/tree-sitter/tree-sitter[tree-sitter], it became clear that neither approach was likely to yield good returns for a reasonable amount of effort.  Note that for some other C code bases, one of those approaches may be good enough, but if accuracy is desired with minimal work, I don't recommend either for Janet's C source.
+
+What seems to be a better alternative is to use https://github.com/MaskRay/ccls[`ccls`], a C https://microsoft.github.io/language-server-protocol/[LSP] server.  (There is also https://clangd.llvm.org/[`clangd`], but I have not tried it out as much.  Depending on your environment, it may be that clangd is a better fit (e.g. for Windows, building clangd can be avoided, but ATM not so with ccls).)
+
+What follows are some instructions in arriving at minimal setups for using ccls with Neovim or Emacs.  There are also links for Kakoune and VSCode info.
+
+== Setup of ccls (C LSP Server) for use with Janet
+
+1. Install https://github.com/MaskRay/ccls[ccls] and make sure it's available via `PATH`.  It may not be necessary to build from source -- see https://github.com/MaskRay/ccls/wiki/Build#system-specific-notes[here] for possible packages.
+
+2. Install https://github.com/rizsotto/Bear[bear] (used for creating `compile_commands.json` which ccls needs).  This too might have https://repology.org/project/bear/versions[a package] already.  (If you use `meson` to build Janet, it may be possible to skip the `bear` installation and use in the following steps.  https://github.com/MaskRay/ccls/wiki/Project-Setup#meson[`meson build` yields a `compile_commands.json`] in the `build` subdirectory, so making a symlink to it from Janet's project root directory may be one way to get things working.)
+
+
+3. Get https://github.com/janet-lang/janet[Janet]'s source:
++
+----
+git clone https://github.com/janet-lang/janet
+----
+
+4. Create https://clang.llvm.org/docs/JSONCompilationDatabase.html[`compile_commands.json`] for ccls by building Janet's source while letting `bear` "snoop":
++
+----
+cd janet
+# remove / modify following as desired
+export PREFIX=$HOME/.local
+bear -- make
+----
+
+At this point the ground has been prepared for working via various editors.  (Manually running `ccls` in Janet's project directory will index the source, yielding a `.ccls-cache` directory, but this step may be performed automatically via one's editor and thus may be unnecessary.)
+
+## Editor Configuration
+
+ATM, instructions are for Neovim and Emacs, but https://github.com/MaskRay/ccls/wiki/Editor-Configuration[using other editors is also possible], including https://github.com/MaskRay/ccls/wiki/Kakoune[Kakoune] and https://github.com/MaskRay/ccls/wiki/Visual-Studio-Code[VSCode].
+
+### Neovim
+
+Apparently, there are https://github.com/MaskRay/ccls/wiki/Editor-Configuration[numerous options], but here just one will be described.
+
+1. Prepare to install https://github.com/neovim/nvim-lspconfig[`nvim-lspconfig`], e.g. if using vim-plug add the following to `~/.config/nvim/init.vim` or other appropriate location:
++
+----
+Plug 'neovim/nvim-lspconfig'
+----
+
+2. Also add:
++
+----
+lua <<EOF
+require('lspconfig').ccls.setup{}
+EOF
+----
+
+3. Install the plugin in Neovim via: `:PlugUpdate`
+
+4. Open a Janet C source file (e.g. `src/core/vm.c`).
+
+5. Verify the LSP connection via `:LspInfo`.
+
+6. Put the cursor somewhere in a Janet-specific identifier and try: `:lua vim.lsp.buf.definition()`
+
+
+7. See https://neovim.io/doc/user/lsp.html[`:help lsp`] and/or https://github.com/neovim/nvim-lspconfig#Keybindings-and-completion[the Keybindings and completion section of nvim-lspconfig's README] for more details.
+
+### Emacs
+
+Below are two ways to set up Emacs.
+
+#### eglot
+
+1. Install https://github.com/joaotavora/eglot[eglot] and configure your `.emacs`-equivalent.  Below is a https://github.com/raxod502/straight.el[`straight.el`]-based approach.
++
+----
+;;; eglot
+(straight-use-package
+  '(eglot :host github
+          :repo "joaotavora/eglot"
+          :file ("*.el")))
+
+(use-package eglot
+  :straight t)
+----
+
+2. Start Emacs and open some Janet C source file (e.g. `src/core/vm.c`).
+
+3. `M-x eglot` to start ccls and connect to it.
+
+4. Try `M-.` on a Janet-specific identifier to test jump-to-definition.
+
+5. See the https://github.com/joaotavora/eglot#1-2-3[1-2-3 section of eglot's README] and https://github.com/MaskRay/ccls/wiki/eglot[the eglot Wiki page at the ccls repository] for more details.
+
+#### lsp-mode and emacs-ccls
+
+1. Install https://github.com/emacs-lsp/lsp-mode[lsp-mode] and https://github.com/MaskRay/emacs-ccls[emacs-ccls] and configure your `.emacs`-equivalent.  Below is a https://github.com/raxod502/straight.el[`straight.el`]-based approach.
++
+----
+;;; lsp-mode
+(straight-use-package
+ '(lsp-mode :host github
+            :repo "emacs-lsp/lsp-mode"
+            :file ("*.el" "clients" "docs" "features" "refcard" "scripts")))
+
+(use-package lsp-mode
+  :straight t
+  :init
+  ;; set prefix for lsp-command-keymap
+  (setq lsp-keymap-prefix "C-c l")
+  :commands lsp)
+
+;;; emacs-ccls
+(straight-use-package
+ '(ccls :host github
+        :repo "MaskRay/emacs-ccls"
+        :file ("*.el")))
+
+(use-package ccls
+  :straight t)
+----
+    
+2. Start Emacs and open some Janet C source file (e.g. `src/core/vm.c`).
+
+3. `M-x lsp` to start ccls and connect to it.
+
+4. Try `M-.` on a Janet-specific identifier to test jump-to-definition.
+
+5. See https://emacs-lsp.github.io/lsp-mode/page/installation/[Installation info for LSP Mode] and https://github.com/MaskRay/ccls/wiki/lsp-mode[the lsp mode Wiki page at the ccls repository] for more details.
