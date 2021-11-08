@@ -1,17 +1,14 @@
-``
-testing generated index files
-
-* this code is run via `jpm run test-indexing` (see project.janet)
-
-* the code will attempt to:
-  * clone / pull the janet source repository,
-  * check out various commits,
-  * generate index files, and
-  * attempt to check the generated content
-
-* it only supports checking tags files atm (not TAGS)
-
-``
+# testing generated index files
+#
+# * this code is run via `jpm run test-indexing` (see project.janet)
+#
+# * the code will attempt to:
+#   * clone / pull the janet source repository,
+#   * check out various commits,
+#   * generate index files, and
+#   * attempt to check the generated content
+#
+# * it only supports checking tags files atm (not TAGS)
 
 (defn main
   [& argv]
