@@ -28,7 +28,7 @@ git clone https://github.com/janet-lang/janet
 cd janet
 # remove / modify following as desired
 export PREFIX=$HOME/.local
-bear -- make
+make clean && bear -- make
 ----
 
 An alternative way to end up with `compile_commands.json` is to use https://github.com/janet-lang/janet/blob/40ae2e812ff5e186ba578d441de9f3d2bebd93fb/Makefile#L322-L324[the Makefile target `compile-commands` in janet's Makefile].  Note that this may require installation of https://pypi.org/project/compiledb/[`compiledb`].
