@@ -31,6 +31,8 @@ export PREFIX=$HOME/.local
 bear -- make
 ----
 
+An alternative way to end up with `compile_commands.json` is to use [the Makefile target `compile-commands` in janet's Makefile](https://github.com/janet-lang/janet/blob/40ae2e812ff5e186ba578d441de9f3d2bebd93fb/Makefile#L322-L324).  Note that this may require installation of [`compiledb`](https://pypi.org/project/compiledb/).
+
 At this point the ground has been prepared for working via various editors.  (Manually running `ccls` in Janet's project directory will index the source, yielding a `.ccls-cache` directory, but this step may be performed automatically via one's editor and thus may be unnecessary.)
 
 ## Editor Configuration
