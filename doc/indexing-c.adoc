@@ -7,23 +7,28 @@ After making attempts to index Janet's C source code using https://github.com/un
 
 What seems to be a better alternative is to use https://github.com/MaskRay/ccls[`ccls`], a C https://microsoft.github.io/language-server-protocol/[LSP] server.  (There is also https://clangd.llvm.org/[`clangd`], but I have not tried it out as much.  Depending on your environment, it may be that clangd is a better fit (e.g. for Windows, building clangd can be avoided, but ATM not so with ccls).)
 
-What follows are some instructions in arriving at minimal setups for using ccls with Neovim, Emacs, or Kakoune.  There are also links for VSCode info.
+What follows are some instructions in arriving at minimal setups for using ccls with Neovim, Emacs, Kakoune, or VSCode.
 
-== Setup of ccls (C LSP Server) for use with Janet
+== Creation of `compile_commands.json`
 
-1. Install https://github.com/MaskRay/ccls[ccls] and make sure it's available via `PATH`.  It may not be necessary to build from source -- see https://github.com/MaskRay/ccls/wiki/Build#system-specific-notes[here] for possible packages.
+Both LSP servers mentioned above depend on the existence of a file named `compile_comamnds.json` for proper functioning.  According to https://clang.llvm.org/docs/JSONCompilationDatabase.html[Clang's docs], it (or its content anyway) is:
 
-2. Install https://github.com/rizsotto/Bear[bear] (used for creating `compile_commands.json` which ccls needs).  This too might have https://repology.org/project/bear/versions[a package] already.  (If you use `meson` to build Janet, it may be possible to skip the `bear` installation and use in the following steps.  https://github.com/MaskRay/ccls/wiki/Project-Setup#meson[`meson build` yields a `compile_commands.json`] in the `build` subdirectory, so making a symlink to it from Janet's project root directory may be one way to get things working.)
+> a format for specifying how to replay single compilations independently of the build system
 
+This file is specific to a project can be created in more than one way.  The ways I've tried embed absolute paths unfortunately so I'm not going to upload mine (which might get out of date anyway).
 
-3. Get https://github.com/janet-lang/janet[Janet]'s source:
-+
+First though, get https://github.com/janet-lang/janet[Janet]'s source:
+
 ----
 git clone https://github.com/janet-lang/janet
 ----
 
-4. Create https://clang.llvm.org/docs/JSONCompilationDatabase.html[`compile_commands.json`] for ccls by building Janet's source while letting `bear` "snoop":
-+
+=== Using `bear`
+
+Install https://github.com/rizsotto/Bear[bear].  There might be https://repology.org/project/bear/versions[a package] already.
+
+With `bear` installed, build `janet` using `make`, but with a slight change, e.g.
+
 ----
 cd janet
 # remove / modify following as desired
@@ -31,17 +36,53 @@ export PREFIX=$HOME/.local
 make clean && bear -- make
 ----
 
-An alternative way to end up with `compile_commands.json` is to use https://github.com/janet-lang/janet/blob/40ae2e812ff5e186ba578d441de9f3d2bebd93fb/Makefile#L322-L324[the Makefile target `compile-commands` in janet's Makefile].  Note that this may require installation of https://pypi.org/project/compiledb/[`compiledb`].
+`bear` should snoop on the building process and produce `compile_comamnds.json`.
 
-At this point the ground has been prepared for working via various editors.  (Manually running `ccls` in Janet's project directory will index the source, yielding a `.ccls-cache` directory, but this step may be performed automatically via one's editor and thus may be unnecessary.)
+=== Using `meson`
+
+Janet can be built using `meson`.  https://github.com/MaskRay/ccls/wiki/Project-Setup#meson[`meson build` yields a `compile_commands.json`] in the `build` subdirectory.
+
+With the file created, make a symlink to it from the repository root for janet, e.g.:
+
+----
+ln -s build/compile_commands.json compile_commands.json
+----
+
+Feel free to skip the following bit, but if the experience of navigation seems a bit cumbersome, consider returning to try the following modification.
+
+=== Tweaking `compile_commands.json`
+
+Whatever method chosen, once `compile_commands.json` has been made, consider editing `compile_commands.json` in the following manner.
+
+One element of the list in `compile_commands.json` is perhaps extraneous for navigational purposes.  Specifically, the element (an object with at least the keys "directory", "file", and "output") that looks like:
+----
+{
+  ...
+  "directory": "...",
+  "file": "...janet.c",
+  "output": "...janet.o" // or "..._janet.c.o" for meson
+},
+----
+
+I believe that corresponds to information about how `janet.o` was produced from `janet.c` (an amalmagated file).
+
+Leaving that in `compile_commands.json` can lead to multiple candidates appearing when one asks one's editor to "jump to definition" because more than one possibility will exist.  I think this is because `janet.c` is, roughly, all of the content in `src/core/` concatenated together.  In my experience, removing it leads to less hectic navigation.
+
+So using some editor, remove the relevant bit from `compile_commands.json`.
+
+== Setup of ccls (C LSP Server) for use with Janet
+
+Install https://github.com/MaskRay/ccls[ccls] and make sure it's available via `PATH`.  It may not be necessary to build from source -- see https://github.com/MaskRay/ccls/wiki/Build#system-specific-notes[here] for possible packages.
+
+At this point the ground has been prepared for working via various editors.
 
 ## Editor Configuration
 
-ATM, instructions are for Neovim, Emacs, and Kakoune, but https://github.com/MaskRay/ccls/wiki/Editor-Configuration[using other editors is also possible], for example, https://github.com/MaskRay/ccls/wiki/Visual-Studio-Code[VSCode].
+ATM, instructions are for Neovim, Emacs, Kakoune, and VSCode, but apparently https://github.com/MaskRay/ccls/wiki/Editor-Configuration[using other editors is also possible].
 
 ### Neovim
 
-Apparently, there are https://github.com/MaskRay/ccls/wiki/Editor-Configuration[numerous options], but here just one will be described.
+Apparently, there are https://github.com/MaskRay/ccls/wiki/Editor-Configuration[numerous options], but here just one will be described.  Be warned that I'm not a highly skilled user of Neovim and there might be better options.  If it's practical I recommend asking around for up-to-date recommendations on what to do.
 
 1. Prepare to install https://github.com/neovim/nvim-lspconfig[`nvim-lspconfig`], e.g. if using vim-plug add the following to `~/.config/nvim/init.vim` or other appropriate location:
 +
@@ -65,8 +106,7 @@ EOF
 
 6. Put the cursor somewhere in a Janet-specific identifier and try: `:lua vim.lsp.buf.definition()`
 
-
-7. See https://neovim.io/doc/user/lsp.html[`:help lsp`] and/or https://github.com/neovim/nvim-lspconfig#Keybindings-and-completion[the Keybindings and completion section of nvim-lspconfig's README] for more details.
+7. See https://neovim.io/doc/user/lsp.html[`:help lsp`] and/or https://github.com/neovim/nvim-lspconfig#suggested-configuration[the Suggested configuration section of nvim-lspconfig's README] for more details.
 
 ### Emacs
 
@@ -161,3 +201,17 @@ map global user l %{: enter-user-mode lsp<ret>} -docstring "LSP mode"
 5. Try `,ld` on a Janet-specific identifier to test jump-to-definition.
 
 6. See the https://github.com/MaskRay/ccls/wiki/Kakoune[Kakoune page of the ccls wiki], the https://github.com/kak-lsp/kak-lsp/wiki/How-to-install-servers#c-c[C, C++ portion of the "How to install servers" page of the kak-lsp wiki], and/or https://discuss.kakoune.com/t/kak-lsp-ccls/750[MaskRay's post to Kakoune Community Hub] for more details.
+
+### VSCode
+
+1. Install the https://github.com/MaskRay/vscode-ccls[ccls VSCode Extension].  It's also available via the usual VSCode means.
+
+2. With VSCode running, choose File -> Open Folder... to open Janet's source directory.
+
+3. Open a C source file (e.g. `src/core/vm.c`).
+
+4. Search for an identifier (e.g. `stack`).
+
+5. Right-click on the identifier and choose "Go to Definition" from the context menu that should have appeared.
+
+More details are at: https://github.com/MaskRay/ccls/wiki/Visual-Studio-Code[ccls' Visual Studio Code wiki page].
