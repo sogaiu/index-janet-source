@@ -311,10 +311,25 @@
    `src/core/corelib.c`
   ])
 
+(defn in-janet-src-dir?
+  []
+  (and (os/stat "janet.1")
+       (os/stat "src")))
+
 ###########################################################################
 
 (defn main
   [& argv]
+
+  (when (or (not (in-janet-src-dir?))
+            (when-let [arg (get argv 1)]
+              (= "--help" arg)))
+    (print "idk-janet - generate tags / TAGS file for janet source code")
+    (print)
+    (print "Invoke in root of janet source repository directory.")
+    (print)
+    (print "Emacs users set `IJS_OUTPUT_FORMAT=etags` to produce TAGS file.")
+    (os/exit 0))
 
   (def opts
     @{:output-format "u-ctags"})
