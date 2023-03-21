@@ -193,11 +193,8 @@
     # XXX: should :link be supported?
     (cond
       (= :file stat)
-      (if (string/has-suffix? file-ext apath)
-        (array/push src-filepaths apath)
-        (do
-          (eprintf "File does not have extension: %p" file-ext)
-          (os/exit 1)))
+      # XXX: this part has been customized so that idk-janet can be handled
+      (array/push src-filepaths apath)
       #
       (= :directory stat)
       (array/concat src-filepaths (find-files-with-ext apath file-ext))

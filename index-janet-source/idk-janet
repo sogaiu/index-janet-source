@@ -38,6 +38,17 @@
       (string bin-name exe-suffix)
       bin-name)))
 
+(comment
+
+  (let [bin-name (ctags/u-ctags-bin-name)]
+    (or (= bin-name "ctags")
+        (= bin-name "ctags-universal")
+        (= bin-name "ctags.exe")))
+  # =>
+  true
+
+  )
+
 ###########################################################################
 
 (defn ctags/make-warning
