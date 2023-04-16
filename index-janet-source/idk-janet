@@ -425,7 +425,9 @@
     (each line out-lines
       (when (not= line "") # XXX: not nice to be checking so many times
         (file/write tf line)
-        (file/write tf "\n")))
+        (when (not (or (string/has-suffix? "\r" line)
+                       (string/has-suffix? "\n" line)))
+          (file/write tf "\n"))))
     (file/flush tf))
 
   (os/exit 0))
