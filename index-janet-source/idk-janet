@@ -171,6 +171,10 @@
              `\1/`
              `N,defn/`)
      (string `--regex-janet=`
+             `/^\([ \t]*defdyn[ \t]+([^0-9:#][^ \t\[{(]+)/`
+             `\1/`
+             `y,defdyn/`)
+     (string `--regex-janet=`
              `/^\([ \t]*var[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
              `V,var/`)
