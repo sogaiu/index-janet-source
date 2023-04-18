@@ -315,6 +315,41 @@
    `src/core/corelib.c`
   ])
 
+(defn ctags/for-math-args
+  [opts]
+  [# avoid being affected by local configuration
+   `--options=NONE` # XXX: noisy
+   (string `--output-format=` (opts :output-format))
+   `--sort=no`
+   `--langdef=custom`
+   `--langmap=custom:.c`
+   `--languages=custom`
+   # acos, asin, atan, etc.
+   (string `--regex-custom=`
+           `/^JANET_DEFINE_MATHOP\(`
+           `([a-z0-9]+),/`
+           `math\/\1/`
+           `D,def/`)
+   # log-gamma, fabs, tgamma
+   (string `--regex-custom=`
+           `/^JANET_DEFINE_NAMED_MATHOP\(`
+           `"`
+           `([a-z0-9-]+)`
+           `",/`
+           `math\/\1/`
+           `D,def/`)
+   # atan2, pow, hypot, next
+   (string `--regex-custom=`
+           `/^JANET_DEFINE_MATH2OP\(`
+           `[^"]+"\(`
+           `([^ ]+)`
+           ` /`
+           `\1/`
+           `D,def/`)
+   `-f` `-`
+   `src/core/math.c`
+  ])
+
 (defn in-janet-src-dir?
   []
   (and (os/stat "janet.1")
@@ -409,6 +444,18 @@
       (os/exit 1)))
 
   (log-any-err err-3-buf "tags-3-error")
+
+  # pick up some things from src/core/math.c
+  (def err-4-buf @"")
+
+  (try
+    (ctags/u-ctags ctags-bin (ctags/for-math-args opts)
+                   out-buf err-4-buf)
+    ([err]
+      (eprintf "Error invoking ctags for math.c: %p" err)
+      (os/exit 1)))
+
+  (log-any-err err-4-buf "tags-4-error")
 
   # lines should only be sorted for u-ctags
   (def out-lines
