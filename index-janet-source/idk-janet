@@ -382,7 +382,8 @@
     (os/exit 0))
 
   (def opts
-    @{:output-format "u-ctags"})
+    @{:output-format "u-ctags"
+      :file-extension ""})
 
   (when-let [fmt (os/getenv "IJS_OUTPUT_FORMAT")]
     (when (nil? (get {"etags" true "u-ctags" true}
@@ -393,13 +394,19 @@
   (def out-format
     (opts :output-format))
 
+  (when-let [file-ext (os/getenv "IJS_FILE_EXTENSION")]
+    (put opts :file-extension file-ext))
+
+  (def file-extension
+    (opts :file-extension))
+
   (def tags-fname
     (case out-format
       "etags"
-      "TAGS"
+      (string "TAGS" file-extension)
       #
       "u-ctags"
-      "tags"
+      (string "tags" file-extension)
       #
       (errorf "Unrecognized output-format: %s" out-format)))
 
