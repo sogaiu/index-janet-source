@@ -172,7 +172,7 @@
      (string `--regex-janet=`
              `/^\([ \t]*def[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `D,def/`)
+             `d,def/`)
      (string `--regex-janet=`
              `/^\([ \t]*defglobal[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
@@ -180,11 +180,11 @@
      (string `--regex-janet=`
              `/^\([ \t]*defmacro[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `M,macro/`)
+             `m,macro/`)
      (string `--regex-janet=`
              `/^\([ \t]*defn[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `N,defn/`)
+             `n,defn/`)
      (string `--regex-janet=`
              `/^\([ \t]*defdyn[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
@@ -192,11 +192,11 @@
      (string `--regex-janet=`
              `/^\([ \t]*var[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `V,var/`)
+             `v,var/`)
      (string `--regex-janet=`
              `/^\([ \t]*varfn[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `R,varfun/`)
+             `r,varfun/`)
      (string `--regex-janet=`
              `/^\([ \t]*varglobal[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
@@ -205,19 +205,19 @@
      (string `--regex-janet=`
              `/^\([ \t]*def-[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `d,privatedef/`)
+             `D,privatedef/`)
      (string `--regex-janet=`
              `/^\([ \t]*defmacro-[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `m,privatedefmacro/`)
+             `M,privatedefmacro/`)
      (string `--regex-janet=`
              `/^\([ \t]*defn-[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `n,privatedefn/`)
+             `N,privatedefn/`)
      (string `--regex-janet=`
              `/^\([ \t]*var-[ \t]+([^0-9:#][^ \t\[{(]+)/`
              `\1/`
-             `v,privatevar/`)
+             `V,privatevar/`)
      ]
    `--languages=custom,janet`
    `-f` `-`
