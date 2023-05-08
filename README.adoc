@@ -71,10 +71,10 @@ that Emacs can use.
 2. Put the cursor within an identifier (except Kakoune).
 
 3. Invoke the relevant command:
-   * Vim/Neovim: `g]` or https://neovim.io/doc/user/tagsrch.html#tag-matchlist[:tselect]
-   * Emacs: `M-.` or https://www.gnu.org/software/emacs/manual/html_node/emacs/Looking-Up-Identifiers.html[xref-find-definitions]
+   * Vim/Neovim: `g]` or https://neovim.io/doc/user/tagsrch.html#tag-matchlist[:tselect] (`Ctrl-o` to go back)
+   * Emacs: `M-.` or https://www.gnu.org/software/emacs/manual/html_node/emacs/Looking-Up-Identifiers.html[xref-find-definitions] (`M-,` to go back)
    * Kakoune with https://github.com/andreyorst/fzf.kak[fzf.kak]: `Ctrl-p` then `t` then filter for the identifer by typing
-   * VSCode with https://github.com/jtanx/ctagsx[ctagsx]: `F12` or `Ctrl-t`
+   * VSCode with https://github.com/jtanx/ctagsx[ctagsx]: `F12` or `Ctrl-t` (`Alt-t` to go back)
 
 == Support Details
 
