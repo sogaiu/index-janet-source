@@ -36,18 +36,26 @@
       (when (dyn :debug) (printf "** cloning: %s" repo-url))
       (os/execute ["git" "clone" repo-url] :px)
       (os/cd repo-dir-name)))
-  (defer (os/execute ["git" "checkout" dflt-branch] :px) 
+  (defer (os/execute ["git" "checkout" dflt-branch] :px)
     # test against multiple commits
     (each commit-ish
       [
        dflt-branch
+       "v1.35.2" "v1.35.1" "v1.35.0"
+       "v1.34.0"
+       "v1.33.0"
+       "v1.32.1" "v1.32.0"
+       "v1.31.0"
+       "v1.30.0"
+       "v1.29.1" "v1.29.0"
+       "v1.28.0"
        "v1.27.0"
        "v1.26.0"
-       "v1.25.0" "v1.25.1"
+       "v1.25.1" "v1.25.0"
        "v1.24.0"
        "v1.23.0"
        "v1.22.0"
-       "v1.21.0" "v1.21.1" "v1.21.2"
+       "v1.21.2" "v1.21.1" "v1.21.0"
        "v1.20.0"
        "v1.19.2" "v1.19.1" "v1.19.0"
        "v1.18.1" "v1.18.0"
