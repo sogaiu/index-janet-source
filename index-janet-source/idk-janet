@@ -1,3 +1,5 @@
+#! /usr/bin/env janet
+
 # produce index file (tags or TAGS) for janet source repository
 
 # this handles janet -> janet and janet -> c lookups
