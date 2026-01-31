@@ -15,7 +15,7 @@ Both LSP servers mentioned above depend on the existence of a file named `compil
 
 > a format for specifying how to replay single compilations independently of the build system
 
-This file is specific to a project can be created in more than one way.  The ways I've tried embed absolute paths unfortunately so I'm not going to upload mine (which might get out of date anyway).
+This file is specific to a project can be created in more than one way.  The ways I've tried embed absolute paths unfortunately so I'm not going to upload mine (which might get out of date anyway).  Below a couple of ways will be described, one using `bear` and the other via `meson`.
 
 First though, get https://github.com/janet-lang/janet[Janet]'s source:
 
