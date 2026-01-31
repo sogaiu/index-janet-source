@@ -70,9 +70,11 @@ Leaving that in `compile_commands.json` can lead to multiple candidates appearin
 
 So using some editor, remove the relevant bit from `compile_commands.json`.
 
-== Setup of ccls (C LSP Server) for use with Janet
+== Setup of a C LSP Server for use with Janet
 
-Install https://github.com/MaskRay/ccls[ccls] and make sure it's available via `PATH`.  It may not be necessary to build from source -- see https://github.com/MaskRay/ccls/wiki/Build#system-specific-notes[here] for possible packages.
+Install https://clangd.llvm.org/[`clangd`] or https://github.com/MaskRay/ccls[ccls] and make sure the appropriate binary is available via `PATH`.
+
+It may not be necessary to build from source.  For clangd, see https://clangd.llvm.org/installation.html#installing-clangd[here] and for ccls, see https://github.com/MaskRay/ccls/wiki/Build#system-specific-notes[here] for some hints on installation.
 
 At this point the ground has been prepared for working via various editors.
 
